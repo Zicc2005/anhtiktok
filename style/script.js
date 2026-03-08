@@ -350,11 +350,19 @@ function populateGallery() {
         const _0x230cd7 = _0x23dd57;
         return _0x2c8425[_0x230cd7(462)](_0x5aa53e, _0x31b7fa);
       }
-    }, _0x2b3bda = document.createElement(_0x2c8425[_0x23dd57(426)]);
-    return _0x2b3bda[_0x23dd57(263)] = _0x18df1d, _0x2b3bda.loading = "eager", _0x2b3bda[_0x23dd57(459)](_0x2c8425[_0x23dd57(190)], _0x3e69fa => {
+    };
+    // Create wrapper div with fixed uniform dimensions
+    const wrapper = document.createElement('div');
+    wrapper.className = 'gallery-img-wrap';
+    const _0x2b3bda = document.createElement(_0x2c8425[_0x23dd57(426)]);
+    _0x2b3bda[_0x23dd57(263)] = _0x18df1d;
+    _0x2b3bda.loading = "eager";
+    _0x2b3bda.addEventListener(_0x2c8425[_0x23dd57(190)], _0x3e69fa => {
       const _0xace54e = _0x23dd57;
       _0x546f30[_0xace54e(455)](_0x546f30[_0xace54e(226)], _0x546f30.szAJQ) ? (_0x3e69fa[_0xace54e(211)](), _0x546f30.pOQuC(openLightbox, _0x18df1d)) : _0x4e99e3.classList.remove(_0xace54e(360));
-    }), _0x2b3bda;
+    });
+    wrapper.appendChild(_0x2b3bda);
+    return wrapper;
   };
   [..._0xaac163, ..._0xaac163].forEach(_0x38e624 => galleryTop[_0x2c4751(501)](_0x1d0d62(_0x38e624))), [..._0x2789a2, ..._0x2789a2][_0x2c4751(472)](_0x3a6e97 => galleryBottom[_0x2c4751(501)](_0x1d0d62(_0x3a6e97)));
 }
