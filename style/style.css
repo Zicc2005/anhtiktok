@@ -22,6 +22,7 @@ body {
   animation: gradientBG 15s ease infinite;
   overflow-x: hidden;
   overflow-y: auto;
+  touch-action: manipulation;
 }
 
 @keyframes gradientBG {
@@ -758,8 +759,10 @@ body.has-bg-animated::before {
   }
 
   .gallery-gif-wrapper.top {
-    top: 5px;
-    left: 5px;
+    top: 15px;
+    left: 10px;
+    right: 50px;
+    /* Prevent overlap with close button */
   }
 
   .gallery-gif-wrapper.bottom {
@@ -791,8 +794,6 @@ body.has-bg-animated::before {
   gap: 15px;
   pointer-events: none;
   z-index: 10;
-  max-width: calc(100% - 20px);
-  overflow: hidden;
 }
 
 .gallery-gif-wrapper.top {

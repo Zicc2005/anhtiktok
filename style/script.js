@@ -35,27 +35,27 @@ async function loadLetter() {
 loadLetter();
 const songs = [
   {
-    title: "Chúc Em Ngủ Ngon",
+    title: "C H Ú C",
     cover: "style/sound/Anh (1).jpg",
-    src: "style/sound/4.mp3"
-  },
-  {
-    title: "Em Khác Gì Hoa",
-    cover: "style/sound/Anh (2).jpg",
     src: "style/sound/1.mp3"
   },
   {
-    title: "Luôn Yêu Đời",
-    cover: "style/sound/Anh (3).jpg",
+    title: "V Â N",
+    cover: "style/sound/Anh (2).jpg",
     src: "style/sound/2.mp3"
   },
   {
-    title: "Vui Không Em",
-    cover: "style/sound/Anh (5).jpg",
+    title: "L U Ô N ",
+    cover: "style/sound/Anh (3).jpg",
     src: "style/sound/3.mp3"
   },
   {
-    title: "Về Đâu Mái Tóc Người Thương",
+    title: "X I N H",
+    cover: "style/sound/Anh (5).jpg",
+    src: "style/sound/4.mp3"
+  },
+  {
+    title: "Đ Ẹ P",
     cover: "style/sound/Anh (9).jpg",
     src: "style/sound/5.mp3"
   }
