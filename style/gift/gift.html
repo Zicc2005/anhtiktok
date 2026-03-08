@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gift Video & Wishes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden;
+            font-family: "Playfair Display", serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #video-container {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+            z-index: 1;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        #wish-container {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.5s ease, visibility 1.5s;
+            z-index: 2;
+            background: linear-gradient(135deg, #ffd1dc 0%, #ffafbd 50%, #ffc3a0 100%);
+        }
+
+        .wish-box {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 90%;
+            width: 450px;
+            box-shadow: 0 15px 35px rgba(216, 27, 96, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transform: translateY(20px);
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .show-wish #wish-container {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .show-wish .wish-box {
+            transform: translateY(0);
+        }
+
+        h1 {
+            font-family: "Dancing Script", cursive;
+            color: #d81b60;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            color: #ad1457;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .decor-img {
+            width: 80px;
+            margin-top: 10px;
+        }
+
+        #play-btn {
+            position: absolute;
+            z-index: 10;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(216, 27, 96, 0.8);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s;
+        }
+
+        #play-btn:hover {
+            transform: scale(1.1);
+            background: rgba(216, 27, 96, 1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <button id="play-btn"><i class="fa-solid fa-play"></i></button>
+
+    <div id="video-container">
+        <video id="gift-video" playsinline>
+            <source src="gift.mp4" type="video/mp4" />
+            Trình duyệt của bạn không hỗ trợ video.
+        </video>
+    </div>
+
+    <div id="wish-container">
+        <div class="wish-box">
+            <h1>Chúc Mừng Ngày 8/3</h1>
+            <p>Chúc bạn Vân xinh gái  có một ngày Quốc tế Phụ Nữ thật vui vẻ, hạnh phúc, và luôn xinh đẹp rạng rỡ. Mong mọi điều tốt
+                đẹp nhất sẽ đến bên bạn nha :> !</p>
+            <img src="https://i.pinimg.com/originals/4e/89/d3/4e89d3e4ec4b1f59b1664e880a875c65.gif" alt="decor"
+                class="decor-img" />
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('gift-video');
+        const playBtn = document.getElementById('play-btn');
+        const container = document.body;
+
+        function startVideo() {
+            playBtn.style.display = 'none';
+            video.play().catch(() => {
+                playBtn.style.display = 'flex';
+            });
+        }
+
+        playBtn.addEventListener('click', startVideo);
+
+        // Thử auto-play khi iframe được tải
+        let playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                playBtn.style.display = 'none';
+            }).catch(error => {
+                playBtn.style.display = 'flex';
+            });
+        }
+
+        video.addEventListener('ended', () => {
+            document.getElementById('video-container').style.opacity = '0';
+            setTimeout(() => {
+                container.classList.add('show-wish');
+            }, 500); // Hiển thị form lời chúc sau khi video mờ đi
+        });
+    </script>
+</body>
+
+</html>
