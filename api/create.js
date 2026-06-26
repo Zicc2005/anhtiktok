@@ -95,20 +95,20 @@ function encodeURIComponentPath(path) {
 }
 
 function rawUrl(owner, repo, branch, path) {
-  return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${path}`;
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${encodeURIComponentPath(path)}`;
 }
 
-async function storeUpload({ owner, repo, branch, id, folder, index, file, fallbackExt }) {
+async function storeUpload({ owner, repo, branch, id, folder, index, file, fallbackExt, filename }) {
   const parsed = parseDataUrl(file);
   if (!parsed) return "";
   const ext = extensionFrom(file, fallbackExt);
-  const filename = `${folder}-${String(index).padStart(2, "0")}.${ext}`;
-  const path = `data/pages/${id}/assets/${filename}`;
-  await putFile(owner, repo, branch, path, parsed.base64, `Add asset ${id}/${filename}`);
+  const resolvedFilename = filename ? filename(ext) : `${folder}-${String(index).padStart(2, "0")}.${ext}`;
+  const path = `data/pages/${id}/assets/${folder}/${resolvedFilename}`;
+  await putFile(owner, repo, branch, path, parsed.base64, `Add asset ${id}/${folder}/${resolvedFilename}`);
   return rawUrl(owner, repo, branch, path);
 }
 
-async function resolveAsset(context, value, folder, index, fallbackExt) {
+async function resolveAsset(context, value, folder, index, fallbackExt, filename) {
   if (!value) return "";
   if (value.url) return value.url;
   if (value.file) {
@@ -117,7 +117,8 @@ async function resolveAsset(context, value, folder, index, fallbackExt) {
       folder,
       index,
       file: value.file,
-      fallbackExt
+      fallbackExt,
+      filename
     });
   }
   return "";
@@ -206,20 +207,55 @@ module.exports = async function handler(req, res) {
 
     const gallery = [];
     for (let index = 0; index < (input.gallery || []).length; index += 1) {
-      const url = await resolveAsset(context, input.gallery[index], "gallery", index + 1, "jpg");
+      const url = await resolveAsset(
+        context,
+        input.gallery[index],
+        "img",
+        index + 1,
+        "jpg",
+        (ext) => `Anh (${index + 1}).${ext}`
+      );
       if (url) gallery.push(url);
     }
 
     const songs = [];
     for (let index = 0; index < (input.songs || []).length; index += 1) {
       const song = input.songs[index];
-      const cover = await resolveAsset(context, song.cover, "song-cover", index + 1, "jpg");
-      const src = await resolveAsset(context, song.src, "song", index + 1, "mp3");
+      const cover = await resolveAsset(
+        context,
+        song.cover,
+        "sound",
+        index + 1,
+        "jpg",
+        (ext) => `Anh (${index + 1}).${ext}`
+      );
+      const src = await resolveAsset(
+        context,
+        song.src,
+        "sound",
+        index + 1,
+        "mp3",
+        (ext) => `${index + 1}.${ext}`
+      );
       if (src) songs.push({ title: song.title || "Untitled", cover, src });
     }
 
-    const giftVideo = await resolveAsset(context, input.gift && input.gift.video, "gift", 1, "mp4");
-    const lockImage = await resolveAsset(context, input.lockImage, "pass", 1, "jpg");
+    const giftVideo = await resolveAsset(
+      context,
+      input.gift && input.gift.video,
+      "gift",
+      1,
+      "mp4",
+      (ext) => `gift.${ext}`
+    );
+    const lockImage = await resolveAsset(
+      context,
+      input.lockImage,
+      "img",
+      0,
+      "jpg",
+      (ext) => `Anh Pass.${ext}`
+    );
 
     const config = {
       id,
