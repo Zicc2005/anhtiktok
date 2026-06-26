@@ -102,9 +102,8 @@ function publicFileUrl(path) {
   return `/api/file?path=${encodeURIComponent(path)}`;
 }
 
-function relativeAssetUrl(id, path) {
-  const prefix = `data/pages/${id}/`;
-  return path.startsWith(prefix) ? path.slice(prefix.length) : publicFileUrl(path);
+function versionedFileUrl(id, path) {
+  return `${publicFileUrl(path)}&v=${encodeURIComponent(id)}`;
 }
 
 async function storeUpload({ owner, repo, branch, id, folder, index, file, fallbackExt, filename, origin }) {
@@ -114,7 +113,7 @@ async function storeUpload({ owner, repo, branch, id, folder, index, file, fallb
   const resolvedFilename = filename ? filename(ext) : `${folder}-${String(index).padStart(2, "0")}.${ext}`;
   const path = `data/pages/${id}/assets/${folder}/${resolvedFilename}`;
   await putFile(owner, repo, branch, path, parsed.base64, `Add asset ${id}/${folder}/${resolvedFilename}`);
-  return relativeAssetUrl(id, path);
+  return versionedFileUrl(id, path);
 }
 
 async function resolveAsset(context, value, folder, index, fallbackExt, filename) {
@@ -413,7 +412,7 @@ module.exports = async function handler(req, res) {
       `Create static gift page ${id}`
     );
 
-    const url = `${origin.replace(/\/$/, "")}/${pagePath}?v=${Date.now()}`;
+    const url = `${origin.replace(/\/$/, "")}/api/view?id=${encodeURIComponent(id)}&v=${Date.now()}`;
     json(res, 200, {
       id,
       url,
