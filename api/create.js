@@ -221,6 +221,7 @@ function pageHtml(config) {
 
   <audio id="audio-player"></audio>
   <audio id="pop-sound" src="/src/pop.mp3"></audio>
+  <audio id="image-sound" src="/src/img/image.mp3" loop></audio>
   <script>window.GIFT_CONFIG = ${safeConfig};</script>
   <script src="/src/runtime.js"></script>
 </body>
