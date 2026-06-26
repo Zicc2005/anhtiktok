@@ -153,6 +153,8 @@ function pageHtml(config) {
 </head>
 
 <body>
+  <div id="bg-media-wrap" aria-hidden="true"></div>
+
   <div class="lock-screen" id="lock-screen">
     <div class="lock-content">
       <div class="lock-image">

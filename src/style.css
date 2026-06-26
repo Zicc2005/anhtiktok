@@ -40,6 +40,14 @@ body {
 }
 
 /* ===== CUSTOM BACKGROUND MEDIA (video / gif / ảnh) ===== */
+#bg-media-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 #bg-media {
   position: fixed;
   inset: 0;
