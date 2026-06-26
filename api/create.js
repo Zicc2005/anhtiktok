@@ -98,8 +98,8 @@ function rawUrl(owner, repo, branch, path) {
   return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${encodeURIComponentPath(path)}`;
 }
 
-function publicFileUrl(origin, path) {
-  return `${origin.replace(/\/$/, "")}/api/file?path=${encodeURIComponent(path)}`;
+function publicFileUrl(path) {
+  return `/api/file?path=${encodeURIComponent(path)}`;
 }
 
 async function storeUpload({ owner, repo, branch, id, folder, index, file, fallbackExt, filename, origin }) {
@@ -109,7 +109,7 @@ async function storeUpload({ owner, repo, branch, id, folder, index, file, fallb
   const resolvedFilename = filename ? filename(ext) : `${folder}-${String(index).padStart(2, "0")}.${ext}`;
   const path = `data/pages/${id}/assets/${folder}/${resolvedFilename}`;
   await putFile(owner, repo, branch, path, parsed.base64, `Add asset ${id}/${folder}/${resolvedFilename}`);
-  return publicFileUrl(origin, path);
+  return publicFileUrl(path);
 }
 
 async function resolveAsset(context, value, folder, index, fallbackExt, filename) {
