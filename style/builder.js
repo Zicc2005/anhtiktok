@@ -179,7 +179,13 @@ form.addEventListener("submit", async (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    const data = await response.json();
+    const responseText = await response.text();
+    let data = {};
+    try {
+      data = responseText ? JSON.parse(responseText) : {};
+    } catch {
+      data = { error: responseText || `HTTP ${response.status}` };
+    }
     if (!response.ok) throw new Error(data.error || "Không tạo được link.");
 
     resultLink.value = data.url;
