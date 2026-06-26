@@ -62,6 +62,7 @@ const giftDirectLink = document.getElementById("gift-direct-link");
 const giftModalElement = document.getElementById("gift-modal-element");
 const fullscreenGiftBtn = document.getElementById("fullscreen-gift");
 const popSound = document.getElementById("pop-sound");
+const imageSound = document.getElementById("image-sound");
 const musicButton = document.getElementById("btn-music");
 const originalMusicButtonHtml = musicButton ? musicButton.innerHTML : "";
 
@@ -69,6 +70,7 @@ let audioContext = null;
 let audioAnalyser = null;
 let audioVisualizerFrame = null;
 let audioVisualizerConnected = false;
+let wasPlayingBeforeImage = false;
 
 async function loadConfig() {
   if (window.GIFT_CONFIG) return;
@@ -129,15 +131,21 @@ function loadBackgroundMedia() {
   const wrap = document.getElementById("bg-media-wrap");
   if (!wrap) return;
 
-  const base = "/style/background/";
   const candidates = [
-    { src: `${base}bg.mp4`, type: "video" },
-    { src: `${base}bg.webm`, type: "video" },
-    { src: `${base}bg.gif`, type: "image" },
-    { src: `${base}bg.png`, type: "image" },
-    { src: `${base}bg.jpg`, type: "image" },
-    { src: `${base}bg.jpeg`, type: "image" },
-    { src: `${base}bg.webp`, type: "image" }
+    { src: "/src/background/bg.mp4", type: "video" },
+    { src: "/src/background/bg.webm", type: "video" },
+    { src: "/src/background/bg.gif", type: "image" },
+    { src: "/src/background/bg.png", type: "image" },
+    { src: "/src/background/bg.jpg", type: "image" },
+    { src: "/src/background/bg.jpeg", type: "image" },
+    { src: "/src/background/bg.webp", type: "image" },
+    { src: "/style/background/bg.mp4", type: "video" },
+    { src: "/style/background/bg.webm", type: "video" },
+    { src: "/style/background/bg.gif", type: "image" },
+    { src: "/style/background/bg.png", type: "image" },
+    { src: "/style/background/bg.jpg", type: "image" },
+    { src: "/style/background/bg.jpeg", type: "image" },
+    { src: "/style/background/bg.webp", type: "image" }
   ];
 
   function applyMedia(item) {
@@ -266,6 +274,26 @@ function stopAudioVisualizer() {
   document.querySelectorAll("#btn-music .vinyl-wave span").forEach((bar) => {
     bar.style.cssText = "";
   });
+}
+
+function openImageMusic() {
+  if (!imageSound) return;
+  if (!audioPlayer.paused) {
+    wasPlayingBeforeImage = true;
+    pauseSong();
+  }
+  imageSound.currentTime = 0;
+  imageSound.play().catch(() => {});
+}
+
+function closeImageMusic() {
+  if (!imageSound) return;
+  imageSound.pause();
+  imageSound.currentTime = 0;
+  if (wasPlayingBeforeImage) {
+    playSong();
+    wasPlayingBeforeImage = false;
+  }
 }
 
 function updateMusicButton() {
@@ -609,8 +637,12 @@ progressBar.addEventListener("click", setProgress);
 document.getElementById("btn-image").addEventListener("click", () => {
   populateGallery();
   imageOverlay.classList.add("active");
+  openImageMusic();
 });
-document.getElementById("close-image").addEventListener("click", () => imageOverlay.classList.remove("active"));
+document.getElementById("close-image").addEventListener("click", () => {
+  imageOverlay.classList.remove("active");
+  closeImageMusic();
+});
 document.getElementById("close-lightbox").addEventListener("click", () => lightboxOverlay.classList.remove("active"));
 lightboxOverlay.addEventListener("click", (event) => {
   if (event.target === lightboxOverlay) lightboxOverlay.classList.remove("active");
