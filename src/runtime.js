@@ -70,10 +70,16 @@ const popSound = document.getElementById("pop-sound");
 async function loadConfig() {
   if (saved || !id) return;
   const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data/pages/${encodeURIComponent(id)}/config.json`;
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) return;
-  const remoteConfig = await response.json();
-  config = { ...defaults, ...remoteConfig };
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const response = await fetch(`${url}?t=${Date.now()}`, { cache: "no-store" });
+    if (response.ok) {
+      const remoteConfig = await response.json();
+      config = { ...defaults, ...remoteConfig };
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 900));
+  }
+  throw new Error("Không tải được dữ liệu trang quà từ GitHub. Thử refresh lại sau vài giây.");
 }
 
 function normalizeConfig() {
@@ -402,13 +408,21 @@ document.addEventListener("keydown", (event) => {
 document.getElementById("btn-reset-lock").addEventListener("click", () => location.reload());
 
 async function init() {
-  await loadConfig();
-  normalizeConfig();
-  buildNumpad();
-  renderSongList();
-  loadSong(config.songs[songIndex]);
-  for (let index = 0; index < 10; index += 1) setTimeout(createHeart, Math.random() * 3000);
-  setInterval(createHeart, 400);
+  try {
+    await loadConfig();
+    normalizeConfig();
+    buildNumpad();
+    renderSongList();
+    loadSong(config.songs[songIndex]);
+    for (let index = 0; index < 10; index += 1) setTimeout(createHeart, Math.random() * 3000);
+    setInterval(createHeart, 400);
+  } catch (error) {
+    document.body.innerHTML = `<main style="padding:32px;font-family:Arial,sans-serif;color:#ad1457;text-align:center">
+      <h1>Chưa tải được dữ liệu</h1>
+      <p>${error.message}</p>
+      <button onclick="location.reload()" style="padding:12px 18px;border:0;border-radius:8px;background:#d81b60;color:white;font-weight:700">Tải lại</button>
+    </main>`;
+  }
 }
 
 init();
