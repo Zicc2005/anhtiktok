@@ -132,15 +132,19 @@ const pinInput = document.getElementById("pin");
 const pinError = document.getElementById("pin-error");
 
 function validatePin(showErrorIfInvalid = true) {
-  pinInput.value = pinInput.value.replace(/\D/g, "");
-  if (pinInput.value.length === 4) {
+  let val = pinInput.value.replace(/\D/g, "");
+  if (val.length > 4) {
+    val = val.slice(0, 4);
+  }
+  pinInput.value = val;
+  if (val.length === 4) {
     pinInput.classList.remove("invalid");
     pinInput.classList.add("valid");
     pinError.textContent = "";
     pinError.style.display = "none";
   } else {
     pinInput.classList.remove("valid");
-    if (showErrorIfInvalid && pinInput.value.length > 0) {
+    if (showErrorIfInvalid && val.length > 0) {
       pinInput.classList.add("invalid");
       pinError.textContent = "Mật khẩu đăng nhập phải gồm đúng 4 chữ số.";
       pinError.style.display = "block";
