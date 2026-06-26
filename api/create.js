@@ -58,7 +58,11 @@ async function githubRequest(path, options = {}) {
   const text = await response.text();
   const data = text ? JSON.parse(text) : null;
   if (!response.ok) {
-    throw new Error(data && data.message ? data.message : `GitHub API ${response.status}`);
+    const message = data && data.message ? data.message : `GitHub API ${response.status}`;
+    const hint = response.status === 404
+      ? "GitHub trả 404. Kiểm tra GITHUB_TOKEN có quyền Contents Read and write với repo, GITHUB_OWNER/GITHUB_REPO đúng, và đã redeploy sau khi thêm env."
+      : "";
+    throw new Error([message, hint].filter(Boolean).join(" "));
   }
   return data;
 }
@@ -120,6 +124,21 @@ async function resolveAsset(context, value, folder, index, fallbackExt) {
 }
 
 module.exports = async function handler(req, res) {
+  if (req.method === "GET") {
+    const owner = process.env.GITHUB_OWNER || DEFAULT_OWNER;
+    const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
+    const branch = process.env.GITHUB_BRANCH || DEFAULT_BRANCH;
+    json(res, 200, {
+      ok: true,
+      owner,
+      repo,
+      branch,
+      hasGithubToken: Boolean(process.env.GITHUB_TOKEN),
+      publicSiteUrl: process.env.PUBLIC_SITE_URL || null
+    });
+    return;
+  }
+
   if (req.method !== "POST") {
     json(res, 405, { error: "Method not allowed" });
     return;
