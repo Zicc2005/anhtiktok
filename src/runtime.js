@@ -188,7 +188,7 @@ function loadBackgroundMedia() {
     if (index >= candidates.length) return;
     const item = candidates[index];
     fetch(item.src, { method: "HEAD" })
-      .then((response) => (response.ok ? applyMedia(item) : tryNext(index + 1)))
+      .then((response) => ((response.ok || response.status === 405) ? applyMedia(item) : tryNext(index + 1)))
       .catch(() => tryNext(index + 1));
   }
 

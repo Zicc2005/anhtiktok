@@ -128,16 +128,37 @@ function validateVideo(input) {
   });
 }
 
+const pinInput = document.getElementById("pin");
+const pinError = document.getElementById("pin-error");
+
+pinInput.addEventListener("input", () => {
+  pinInput.value = pinInput.value.replace(/\D/g, "");
+  if (pinInput.value.length === 4) {
+    pinInput.classList.remove("invalid");
+    pinInput.classList.add("valid");
+    pinError.textContent = "";
+    pinError.style.display = "none";
+  } else {
+    pinInput.classList.remove("valid");
+    pinInput.classList.add("invalid");
+    pinError.textContent = "Mật khẩu đăng nhập phải gồm đúng 4 chữ số.";
+    pinError.style.display = "block";
+  }
+});
+
 document.getElementById("add-gallery").addEventListener("click", () => addGalleryItem());
 document.getElementById("add-song").addEventListener("click", () => addSongItem());
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const giftVideoInput = document.getElementById("giftVideo");
-  const pin = document.getElementById("pin").value.trim();
+  const pin = pinInput.value.trim();
 
   if (!/^\d{4}$/.test(pin)) {
-    alert("Pass đăng nhập phải đúng 4 số.");
+    pinInput.classList.add("invalid");
+    pinError.textContent = "Mật khẩu đăng nhập phải gồm đúng 4 chữ số.";
+    pinError.style.display = "block";
+    pinInput.focus();
     return;
   }
 

@@ -59,6 +59,10 @@ body.has-bg-media {
   animation: none;
 }
 
+body.has-bg-media #bg-media {
+  display: block;
+}
+
 body.has-bg-media::after {
   content: '';
   position: fixed;

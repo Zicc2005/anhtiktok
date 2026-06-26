@@ -197,3 +197,21 @@ details input + input {
     grid-template-columns: 1fr;
   }
 }
+
+.error-message {
+  color: #ff6476;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+  display: none;
+}
+
+input.invalid {
+  border-color: #ff6476;
+  background-color: #fff5f6;
+}
+
+input.valid {
+  border-color: #2e7d32;
+  background-color: #f1f8e9;
+}

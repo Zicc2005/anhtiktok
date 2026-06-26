@@ -319,7 +319,7 @@ module.exports = async function handler(req, res) {
     const id = sanitizeName(input.id, `gift-${Date.now()}`);
     const pin = String(input.pin || "").trim();
     if (!/^\d{4}$/.test(pin)) {
-      json(res, 400, { error: "Pass đăng nhập phải đúng 4 số." });
+      json(res, 400, { error: "Mật khẩu đăng nhập phải gồm đúng 4 chữ số." });
       return;
     }
     const context = { owner, repo, branch, id, origin };
