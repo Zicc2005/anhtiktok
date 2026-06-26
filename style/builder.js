@@ -1,11 +1,10 @@
 const defaults = {
-  gallery: Array.from({ length: 14 }, (_, index) => `img/Anh (${index + 1}).jpg`),
   songs: [
-    { title: "C H Ú C", cover: "sound/Anh (1).jpg", src: "sound/1.mp3" },
-    { title: "V Â N", cover: "sound/Anh (2).jpg", src: "sound/2.mp3" },
-    { title: "L U Ô N", cover: "sound/Anh (3).jpg", src: "sound/3.mp3" },
-    { title: "X I N H", cover: "sound/Anh (5).jpg", src: "sound/4.mp3" },
-    { title: "Đ Ẹ P", cover: "sound/Anh (9).jpg", src: "sound/5.mp3" }
+    { title: "C H Ú C", cover: "", src: "/src/sound/1.mp3" },
+    { title: "V Â N", cover: "", src: "/src/sound/2.mp3" },
+    { title: "L U Ô N", cover: "", src: "/src/sound/3.mp3" },
+    { title: "X I N H", cover: "", src: "/src/sound/4.mp3" },
+    { title: "Đ Ẹ P", cover: "", src: "/src/sound/5.mp3" }
   ]
 };
 
@@ -151,24 +150,16 @@ form.addEventListener("submit", async (event) => {
     title: document.getElementById("title").value.trim(),
     pin: document.getElementById("pin").value.trim() || "2005",
     hint: document.getElementById("hint").value.trim(),
-    lockImage: lockImage ? { file: lockImage } : { url: "img/Anh Pass.jpg" },
+    lockImage: lockImage ? { file: lockImage } : { url: "" },
     letter: document.getElementById("letter").value,
     gallery: await collectGallery(),
     songs: await collectSongs(),
+    defaultSongs: defaults.songs,
     gift: {
       video: giftVideo ? { file: giftVideo } : { url: "" },
       link: document.getElementById("giftLink").value.trim()
     }
   };
-
-  if (!payload.gallery.length) payload.gallery = defaults.gallery.map((url) => ({ url }));
-  if (!payload.songs.length) {
-    payload.songs = defaults.songs.map((song) => ({
-      title: song.title,
-      cover: { url: song.cover },
-      src: { url: song.src }
-    }));
-  }
 
   submitButton.disabled = true;
   submitButton.textContent = "Đang tạo...";
@@ -202,6 +193,3 @@ form.addEventListener("submit", async (event) => {
 document.getElementById("copy-link").addEventListener("click", async () => {
   await navigator.clipboard.writeText(resultLink.value);
 });
-
-defaults.gallery.slice(0, 6).forEach((src) => addGalleryItem(src));
-defaults.songs.forEach((song) => addSongItem(song));

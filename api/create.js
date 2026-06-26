@@ -102,6 +102,11 @@ function publicFileUrl(path) {
   return `/api/file?path=${encodeURIComponent(path)}`;
 }
 
+function relativeAssetUrl(id, path) {
+  const prefix = `data/pages/${id}/`;
+  return path.startsWith(prefix) ? path.slice(prefix.length) : publicFileUrl(path);
+}
+
 async function storeUpload({ owner, repo, branch, id, folder, index, file, fallbackExt, filename, origin }) {
   const parsed = parseDataUrl(file);
   if (!parsed) return "";
@@ -109,7 +114,7 @@ async function storeUpload({ owner, repo, branch, id, folder, index, file, fallb
   const resolvedFilename = filename ? filename(ext) : `${folder}-${String(index).padStart(2, "0")}.${ext}`;
   const path = `data/pages/${id}/assets/${folder}/${resolvedFilename}`;
   await putFile(owner, repo, branch, path, parsed.base64, `Add asset ${id}/${folder}/${resolvedFilename}`);
-  return publicFileUrl(path);
+  return relativeAssetUrl(id, path);
 }
 
 async function resolveAsset(context, value, folder, index, fallbackExt, filename) {
@@ -127,6 +132,108 @@ async function resolveAsset(context, value, folder, index, fallbackExt, filename
     });
   }
   return "";
+}
+
+function pageHtml(config) {
+  const safeConfig = JSON.stringify(config).replace(/</g, "\\u003c");
+  return `<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(config.title || "Happy International Women's Day")}</title>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/qvjz8QFW/Logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body>
+  <div class="lock-screen" id="lock-screen">
+    <div class="lock-content">
+      <div class="lock-image">
+        <img id="lock-photo" src="" alt="Pass Image">
+      </div>
+      <div class="lock-form">
+        <div class="lock-icon">
+          <i class="fa-solid fa-heart"></i>
+        </div>
+        <div class="pass-dots" id="pass-dots"></div>
+        <div class="numpad" id="numpad"></div>
+        <div class="hint-box" id="hint-box">
+          <span class="hint-icon">💡</span>
+          <span class="hint-text" id="hint-text">...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container main-content-hidden" id="main-content">
+    <div class="menu">
+      <button class="menu-item" id="btn-music"><span class="icon"><img src="/src/img/asset/music.png" alt="Music" /></span><span>Music</span></button>
+      <button class="menu-item" id="btn-letter"><span class="icon"><img src="/src/img/asset/letter.png" alt="Letter" /></span><span>Letter</span></button>
+      <button class="menu-item" id="btn-image"><span class="icon"><img src="/src/img/asset/image.png" alt="Image" /></span><span>Image</span></button>
+      <button class="menu-item" id="btn-gift"><span class="icon"><img src="/src/img/asset/gift.png" alt="Gift" /></span><span>Gift</span></button>
+    </div>
+  </div>
+
+  <button class="reset-lock-btn" id="btn-reset-lock"><i class="fa-solid fa-lock"></i></button>
+
+  <div class="overlay" id="letter-overlay">
+    <div class="letter-modal">
+      <button class="close-btn" id="close-letter"><i class="fa-solid fa-xmark"></i></button>
+      <div class="letter-content"><div class="letter-body" id="letter-body"></div></div>
+      <img src="https://i.pinimg.com/originals/4e/89/d3/4e89d3e4ec4b1f59b1664e880a875c65.gif" alt="Decoration" class="letter-gif" />
+    </div>
+  </div>
+
+  <div class="overlay" id="music-overlay">
+    <div class="music-modal">
+      <button class="close-btn" id="close-music"><i class="fa-solid fa-xmark"></i></button>
+      <div class="spotify-player">
+        <div class="player-header"><img src="/src/img/asset/music.png" alt="Spotify" class="spotify-logo" /><span>Music Player</span></div>
+        <div class="now-playing">
+          <div class="song-info"><div class="album-art" id="album-art"><img src="" alt="Album Art" /></div><div class="song-details"><h3 id="song-title">Select a song</h3><p id="song-artist">Artist name</p></div></div>
+          <div class="player-controls"><div class="progress-container"><span id="current-time">0:00</span><div class="progress-bar" id="progress-bar"><div class="progress" id="progress"></div></div><span id="duration">0:00</span></div><div class="control-buttons"><button class="ctrl-btn" id="prev-btn"><i class="fa-solid fa-backward-step"></i></button><button class="ctrl-btn play-pause" id="play-pause-btn"><i class="fa-solid fa-play"></i></button><button class="ctrl-btn" id="next-btn"><i class="fa-solid fa-forward-step"></i></button></div></div>
+        </div>
+        <div class="song-list" id="song-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="image-overlay">
+    <div class="image-modal">
+      <button class="close-btn" id="close-image"><i class="fa-solid fa-xmark"></i></button>
+      <div class="gallery-container"><div class="gallery-row row-top" id="gallery-top"></div><div class="gallery-row row-bottom" id="gallery-bottom"></div></div>
+      <div class="gallery-gif-wrapper top"><img src="https://i.pinimg.com/originals/3f/4e/d3/3f4ed3cb1539cb42dc93b78020a3ef55.gif" alt="Decoration" class="gallery-gif" /><div class="flying-text text-right">HAPPY INTERNATIONAL WOMEN'S DAY</div></div>
+      <div class="gallery-gif-wrapper bottom"><div class="flying-text text-left">HAPPY INTERNATIONAL WOMEN'S DAY</div><img src="https://i.pinimg.com/originals/0f/f7/ac/0ff7acbadeffd1e41be9811d67e1697e.gif" alt="Decoration" class="gallery-gif" /></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="lightbox-overlay" style="z-index: 2000"><div class="lightbox-content"><button class="close-btn" id="close-lightbox"><i class="fa-solid fa-xmark"></i></button><img src="" alt="Full View" id="lightbox-img" /></div></div>
+  <div class="overlay" id="gift-overlay"><div class="gift-modal" id="gift-modal-element"><button class="close-btn" id="close-gift"><i class="fa-solid fa-xmark"></i></button><button class="fullscreen-btn" id="fullscreen-gift"><i class="fa-solid fa-expand"></i></button><iframe src="" frameborder="0" class="gift-iframe"></iframe><div class="gift-direct" id="gift-direct" hidden><h2>Gift đã sẵn sàng</h2><p>Link này mở trực tiếp để tránh website bên ngoài chặn iframe.</p><a id="gift-direct-link" target="_blank" rel="noreferrer">Mở gift</a></div></div></div>
+
+  <audio id="audio-player"></audio>
+  <audio id="pop-sound" src="/src/pop.mp3"></audio>
+  <script>window.GIFT_CONFIG = ${safeConfig};</script>
+  <script src="/src/runtime.js"></script>
+</body>
+
+</html>
+`;
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 module.exports = async function handler(req, res) {
@@ -244,6 +351,15 @@ module.exports = async function handler(req, res) {
       );
       if (src) songs.push({ title: song.title || "Untitled", cover, src });
     }
+    if (!songs.length && Array.isArray(input.defaultSongs)) {
+      input.defaultSongs.forEach((song) => {
+        if (song && song.src) songs.push({
+          title: song.title || "Untitled",
+          cover: song.cover || "",
+          src: song.src
+        });
+      });
+    }
 
     const giftVideo = await resolveAsset(
       context,
@@ -267,7 +383,7 @@ module.exports = async function handler(req, res) {
       title: input.title || "Happy International Women's Day",
       pin: input.pin || "2005",
       hint: input.hint || "",
-      lockImage: lockImage || "img/Anh Pass.jpg",
+      lockImage: lockImage || "",
       letter: input.letter || "",
       gallery,
       songs,
@@ -287,11 +403,22 @@ module.exports = async function handler(req, res) {
       `Create gift page ${id}`
     );
 
-    const url = `${origin.replace(/\/$/, "")}/src/index.html?id=${encodeURIComponent(id)}`;
+    const pagePath = `data/pages/${id}/index.html`;
+    await putFile(
+      owner,
+      repo,
+      branch,
+      pagePath,
+      Buffer.from(pageHtml(config), "utf8").toString("base64"),
+      `Create static gift page ${id}`
+    );
+
+    const url = `${origin.replace(/\/$/, "")}/${pagePath}?v=${Date.now()}`;
     json(res, 200, {
       id,
       url,
-      configUrl: rawUrl(owner, repo, branch, configPath)
+      configUrl: rawUrl(owner, repo, branch, configPath),
+      pageUrl: rawUrl(owner, repo, branch, pagePath)
     });
   } catch (error) {
     json(res, 500, { error: error.message || "Create failed" });

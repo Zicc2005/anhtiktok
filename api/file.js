@@ -52,7 +52,7 @@ module.exports = async function handler(req, res) {
     const buffer = Buffer.from(String(data.content || "").replace(/\n/g, ""), "base64");
     res.statusCode = 200;
     res.setHeader("Content-Type", TYPES[ext] || "application/octet-stream");
-    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    res.setHeader("Cache-Control", "no-store, max-age=0");
     res.end(buffer);
   } catch (error) {
     res.statusCode = 404;

@@ -10,9 +10,7 @@ const a0_0x4cd241 = a0_0x3643;
     }
   }
 }(a0_0x6d9f, 255188));
-const imageFiles = Array.from({ length: 14 }, (_, i) =>
-  `style/img/Anh (${i + 1}).jpg`
-);
+const imageFiles = [];
 let letterText = [];
 function a0_0x6d9f() {
   const _0x3ea9b4 = ["y2XHC3nmAxn0", "wefNtuW", "qwKGtMDVW6bPiefUAa", "yNrUlwDPzNq", "zxHPDez1BgXZy3jLzw4", "teLLtfi", "CMvTB3zL", "C3r5BguVC291BMqVqw5OigZdOcbHAs5TCdm", "terjvhm", "qMfJA3nWywnL", "z3DLrem", "zMLSDgvY", "DgPqt2e", "DhjPBq", "AwHJCeq", "v3jHz2K", "Bgv0DgvYlwjVzhK", "yw9QENi", "s3DcvM0", "sKzTwfO", "r014tuG", "Bgv0DgvYlw92zxjSyxK", "vLnkB1e", "Dw5VvMC", "AeTrtfK", "Bg9N", "y2XVC2uTAw1Hz2u", "BLziDwu", "rfnbsNa", "C3rVCfbYB3bHz2f0Aw9U", "t1jHvhC", "wej3qLq", "q2HOvhO", "BxvZAwmTB3zLCMXHEq", "sLPoC2O", "yNrUlwLTywDL", "C3r5BguVBgv0DgvYlNr4Da", "BxnfEgL0rNvSBhnJCMvLBG", "zgL2", "B2LmruO", "Dfn0rLm", "sMjPAeC", "yNrUlxjLC2v0lwXVy2S", "y3vYC29Y", "zer4BM0", "q3zArLG", "DgL0Bgu", "q1rLDMy", "v0HgvvO", "y2XPy2S", "zvPMvwm", "Bgf6Eq", "lM51Bs1IDg4UzgvSzxrLlwj0BG", "s0P6Bfm", "uxfwC0G", "z2LMDc1TB2rHBc1LBgvTzw50", "v1Psv3e", "C2HHA2u", "ChjVz3jLC3m", "yxv0BW", "qUg6O24GCxv54BUbBIb0AhxHU5LJihBHU4eGrhiUr2LMDgvY", "uvrusLK", "EvrKC0i", "C3r5BguVC291BMqVqw5OicG2ks5QCgC", "CMvSB2fK", "EhDNDNu", "pc9KAxy+cIaGica8l2rPDJ4kica", "tMroA0e", "D2H5rwO", "sM5Kr1y", "C2XPy2u", "qMXtq3O", "C3r5BguVC291BMqVtog7OsbtyxKGqNLLieZdOcbcEwuUBxaZ", "vMD6r24", "BxjPExq", "vffYvuW", "DvnvvhG", "CgXHEs1WyxvZzs1IDg4", "Ae9Zuhy", "zxjYB3i", "C29UzY1SAxn0", "C3jJ", "v05Lrg0", "rNvdDgy", "mJa4oduWAKfXB2TH", "pgKGy2XHC3m9iMzHlxnVBgLKigzHlwv4CgfUzci+pc9PpG", "pgKGy2XHC3m9iMzHlxnVBgLKigzHlwnVBxbYzxnZiJ48l2K+", "nhWXFdn8mNWW", "rvzlvvy", "q2XYqxy", "yM9KEq", "cIaGica8Aw1NihnYyZ0I", "ywrK", "y2DcrLy", "wKzJsLC", "CvPLEMi", "y3jLyxrLrwXLBwvUDa", "yw5PBwf0Aw9UugXHEvn0yxrL", "y1nJCLm", "D3roAwG", "Aw5Uzxjive1m", "BwfW", "A2DtDuK", "vgzIB2q", "zM9UDfnPEMu", "s3PJyuO", "q1vWrxK", "tfL4AvC", "tfzLuLy", "lM51Bs1IDg5Bzgf0ys12ywX1zv0", "wgrZBeq", "yMrdseC", "lMDHBgXLCNKTCM93", "suzArM0", "v1nwz0e", "z2fSBgvYEs1IB3r0B20", "CgXHEq", "BKLRyuS", "yNrUlwXLDhrLCG", "BgvMDa", "ufj4s0S", "pgKGy2XHC3m9iMzHlxnVBgLKigzHlxbHDxnLiJ48l2K+", "C29UzY1HCNrPC3q", "mJy2mteZu0Xuquzu", "C2nYB2XSsgvPz2H0", "C3r5BguVC291BMqVsw4Gtg92zsb4iepdSYdeKmo0AsdeKgNHU4f1lM1WmW", "DLjTthG", "CvbRAxu", "DuLhzfi", "BgLNAhrIB3GTAw1N", "t3Htsw8", "B3b3zLu", "tuDuyLO", "Dg9xu0G", "vgLRDg9RoIbODhrWCZOVl3D3DY50AwT0B2SUy29Tl0bKCI5NAwz0zxiZmdy", "y2XVC2uTBgLNAhrIB3G", "wfzmCxC", "z3HQAg4", "Bg9JyxrPB24", "yNHsAMK", "tvnLuNm", "sNDttu4", "qMjfDuO", "DgfYz2v0", "vuTZq1G", "C3r5BguVC291BMqVqw5OicG1ks5QCgC", "t2vowgi", "BgXRAMK", "rxjYB3iGBg9HzgLUzYbSzxr0zxiUDhH0oG", "y2XVC2uTBxvZAwm", "zNvSBhnJCMvLBMnOyw5Nzq", "DMLICMf0zq", "qxDUDwy", "BNbcr3q", "s2j0u0K", "lMrVDa", "t3zpCfi", "nNjKzNj4ra", "nZK2otK2rfbjy0Dc", "yMjAD1K", "r0XjzwC", "A09Iz08", "ChjLDI1IDg4", "BuzWrLm", "pgKGy2XHC3m9iMzHlxnVBgLKigzHlxbSyxKIpJWVAt4", "y3DXCge", "uffXvum", "DNbruMC", "veXYtwq", "C29UzY1PDgvT", "ELHtBLi", "s1HZq3G", "zhvYyxrPB24", "z2v0rwXLBwvUDej5swq", "vhnVrLe", "D2vIA2L0uMvXDwvZDez1BgXZy3jLzw4", "r0TWAgC", "zeH4wwO", "ywn0AxzL", "BKHovKu", "vgDtBK0", "z2fSBgvYEs10B3a", "qKjrww4", "yLDtB1K", "sePMuey", "qMvxt3G", "DuzgqwO", "r09uswy", "t1H6rK8", "BgvUz3rO", "qMviruy", "mJq3mJaZmKnLq254tW", "m2DqAvrXAW", "yvjAuLO", "Dgv4DenVBNrLBNq", "CMvXDwvZDez1BgXZy3jLzw4", "suTvvfu", "y1DpBK4", "D0vkwgG", "B3LAq2y", "zNvSBhnJCMvLBI1NAwz0", "DgHKyKS", "q1jHy1e", "Bhr3B3q", "vw14uMi", "Ahr0Chm6lY9PlNbPBMLTzY5JB20VB3jPz2LUywXZl2i5lZy3lZrMl2i5nJC0zJnMotK1ywjHmtC3mJuWodK0zdu3zJqYyMjMlMDPzG", "wvjhEha", "Cvbyyve", "z2v0qxr0CMLIDxrL", "Bxnszxf1zxn0rNvSBhnJCMvLBG", "zgLZCgXHEq", "y292zxi", "weXvvw0", "vvnryLa", "lNnVBMCTAxrLBq", "C3r5BguVC291BMqVqwKGtMDVW6bPiefUAc5TCdm", "rgDyDKO", "Ehb4DuK", "CfLlrxa", "Dg1TEM8", "CxvLCNLtzwXLy3rVCKfSBa", "sLvlzu4", "zNjVBq", "ENPlELa", "C3r5BguVC291BMqVqw5OicG0ks5QCgC", "Aw1Hz2uTB3zLCMXHEq", "yxvKAw8TCgXHEwvY", "BMDWzK0", "A2v5zg93BG", "Dw5SB2nRzwq", "wxbotK4", "zuHizgy", "rNjVwvq", "B3P5Efa", "i2fSyNvTlwfYDcbPBwC", "u2f1D1K", "Ahr0Chm6lY9PlNbPBMLTzY5JB20VB3jPz2LUywXZlZrLlZG5l2qZlZrLodLKm2u0zwm0yJfMntLImty2ngu4odbHodC1yZy1lMDPzG", "sg9TCKO", "zenTCfa", "C3r5BguVC291BMqVtuLtu0LorYbzt1uUBxaZ", "y3vYCMvUDfrPBwu", "C3r5Bgu", "Cgf1C2vK", "Bg9JAY1Zy3jLzw4", "DLrcAMG", "EwfoBum", "C3r5BguVC291BMqVqw5OicGYks5QCgC", "zMXVB3i", "zgf0ys12ywX1zq", "rertBwS", "CMfUzg9T", "BgLNAhrIB3GTB3zLCMXHEq", "Aw5UzxjuzxH0", "y2XVC2uTz2LMDa", "BxrdzNO", "DKzetum", "qw5OieZdOcbbAsa/", "C3r5BguVC291BMqVvhjHy2SGmdyGEcboXQfPie7dOhKGq8oZiefUAc5TCdm", "Dwv2vLi", "C3r5BguVC291BMqVqw5OicGXks5QCgC", "rKvbswO", "AvHiBeO", "AxrWvhq", "ufjRCLG", "CgfZCY1KB3rZ", "vNz4zeC", "zNvSBhnJCMvLBKvSzw1LBNq", "sufszvO", "C3r5BguVAw1Nl0fUAcaO", "Cgf1C2u", "yw5PBwf0Aw9UrhvYyxrPB24", "Bgv0DgvYlwzVB3rLCG", "C2nYB2XSvg9W", "CKXHBuS", "C3vzCNm", "CxvLCNLtzwXLy3rVCG", "vhHMsxG", "ywrKrxzLBNrmAxn0zw5LCG", "B3bHy2L0Eq", "qwDfsLi", "sLzJwha", "wLbcAwG", "Ahr0Chm6lY9PlNbPBMLTzY5JB20VB3jPz2LUywXZlZG4lZiZlZGYlZG4mJm4mMy5nZG2mMm3mMu2mgzJmdy4mJjLmZzLyJu1lMDPzG", "tuLtu0LorYbzt1u", "C3DXAuy", "CNrutxK", "DgLTzxvWzgf0zq", "A09TCuO", "CLD2DNy", "BLrur0C", "zM9YrwfJAa", "rNHbrhq", "BM9Uzq", "mdGWmW", "ENf4vMu", "D2LKDgG", "AgvPz2H0", "zfPbA2u", "y29UDgfPBNm", "sMv3wxG", "u1jSzLu", "BwftsNy", "ChjVz3jLC3mTyMfY", "C3bSAxq", "tMzhDxu", "A0riywW", "AgvHCNq", "A2v5", "mty3mtC1ovfVs0Pwsq", "r2L0AhvIoIbODhrWCZOVl2DPDgH1yI5JB20VrhjhAwz0zxi", "Ahr0Chm6lY9PlNbPBMLTzY5JB20VB3jPz2LUywXZl2i2lZzIlZfIl2i2nMiXyMzLnZbHowfKngy2owrLytnInJiWmdeXmJiYlMDPzG", "D3fRwNe", "DhbVBKG", "y2XVC2uTBgv0DgvY", "CNvUBMLUzW", "CLbbqKe", "yxvqy3i", "C3jJrwXLBwvUDa", "sMfOuhK", "yxbWzw5Kq2HPBgq", "yNrUlw11C2LJ", "mtaZmdm2BMLVswLv", "mJbkCgv3D0y", "zNbiuKq", "y2XVBMvoB2rL", "Aw1N", "yKflwwe", "yLrUAvy", "tK94wxa", "D2vIA2L0rxHPDez1BgXZy3jLzw4", "mJmXnJm5ohrbuK14uW"];
@@ -38,27 +36,27 @@ loadLetter();
 const songs = [
   {
     title: "C H Ú C",
-    cover: "style/sound/Anh (1).jpg",
+    cover: "",
     src: "style/sound/1.mp3"
   },
   {
     title: "V Â N",
-    cover: "style/sound/Anh (2).jpg",
+    cover: "",
     src: "style/sound/2.mp3"
   },
   {
     title: "L U Ô N ",
-    cover: "style/sound/Anh (3).jpg",
+    cover: "",
     src: "style/sound/3.mp3"
   },
   {
     title: "X I N H",
-    cover: "style/sound/Anh (5).jpg",
+    cover: "",
     src: "style/sound/4.mp3"
   },
   {
     title: "Đ Ẹ P",
-    cover: "style/sound/Anh (9).jpg",
+    cover: "",
     src: "style/sound/5.mp3"
   }
 ];

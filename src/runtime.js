@@ -2,7 +2,7 @@ const defaults = {
   title: "Happy International Women's Day",
   pin: "2005",
   hint: "Sự giống nhau của chúng ta 🎂",
-  lockImage: "img/Anh Pass.jpg",
+  lockImage: "",
   letter: `Happy 8/3 muộn nha ✨
 
 Chúc cho lúc nào cũng vui vẻ, xinh xắn và tràn đầy năng lượng tích cực
@@ -10,20 +10,19 @@ Lúc nào cũng cười nhiều một chút, vì nụ cười của Vân làm m�
 
 Cứ là chính mình thôi,
 miễn là luôn hạnh phúc, học tốt và tận hưởng từng ngày thật vui nha 🌸`,
-  gallery: Array.from({ length: 14 }, (_, index) => `img/Anh (${index + 1}).jpg`),
+  gallery: [],
   songs: [
-    { title: "C H Ú C", cover: "sound/Anh (1).jpg", src: "sound/1.mp3" },
-    { title: "V Â N", cover: "sound/Anh (2).jpg", src: "sound/2.mp3" },
-    { title: "L U Ô N", cover: "sound/Anh (3).jpg", src: "sound/3.mp3" },
-    { title: "X I N H", cover: "sound/Anh (5).jpg", src: "sound/4.mp3" },
-    { title: "Đ Ẹ P", cover: "sound/Anh (9).jpg", src: "sound/5.mp3" }
+    { title: "C H Ú C", cover: "", src: "sound/1.mp3" },
+    { title: "V Â N", cover: "", src: "sound/2.mp3" },
+    { title: "L U Ô N", cover: "", src: "sound/3.mp3" },
+    { title: "X I N H", cover: "", src: "sound/4.mp3" },
+    { title: "Đ Ẹ P", cover: "", src: "sound/5.mp3" }
   ],
   gift: { video: "gift/gift.mp4", link: "" }
 };
 
 const id = new URLSearchParams(location.search).get("id");
-const saved = id && localStorage.getItem(`gift-site:${id}`);
-let config = { ...defaults, ...(saved ? JSON.parse(saved) : {}) };
+let config = window.GIFT_CONFIG ? { ...window.GIFT_CONFIG } : (id ? {} : { ...defaults });
 
 let enteredPin = "";
 let songIndex = 0;
@@ -65,13 +64,13 @@ const fullscreenGiftBtn = document.getElementById("fullscreen-gift");
 const popSound = document.getElementById("pop-sound");
 
 async function loadConfig() {
-  if (saved || !id) return;
+  if (window.GIFT_CONFIG) return;
+  if (!id) return;
   const url = `/api/page?id=${encodeURIComponent(id)}`;
   for (let attempt = 0; attempt < 12; attempt += 1) {
     const response = await fetch(`${url}&t=${Date.now()}`, { cache: "no-store" });
     if (response.ok) {
-      const remoteConfig = await response.json();
-      config = { ...defaults, ...remoteConfig };
+      config = await response.json();
       return;
     }
     await new Promise((resolve) => setTimeout(resolve, 900));
@@ -80,23 +79,25 @@ async function loadConfig() {
 }
 
 function normalizeConfig() {
-  if (!config.gallery || !config.gallery.length) config.gallery = defaults.gallery;
-  if (!config.songs || !config.songs.length) config.songs = defaults.songs;
-  if (!config.gift) config.gift = defaults.gift;
-  config.lockImage = normalizeAssetUrl(config.lockImage || defaults.lockImage);
-  config.gallery = config.gallery.map(normalizeAssetUrl);
+  if (!Array.isArray(config.gallery)) config.gallery = id ? [] : defaults.gallery;
+  if (!Array.isArray(config.songs)) config.songs = id ? [] : defaults.songs;
+  if (!config.gift) config.gift = id ? { video: "", link: "" } : defaults.gift;
+  config.lockImage = normalizeAssetUrl(config.lockImage || (id ? "" : defaults.lockImage));
+  config.gallery = config.gallery.map(normalizeAssetUrl).filter(Boolean);
   config.songs = config.songs.map((song) => ({
     ...song,
     cover: normalizeAssetUrl(song.cover),
     src: normalizeAssetUrl(song.src)
-  }));
+  })).filter((song) => song.src);
   config.gift = {
     ...config.gift,
     video: normalizeAssetUrl(config.gift.video)
   };
   letterText = String(config.letter || defaults.letter).split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
   document.title = config.title || defaults.title;
-  document.getElementById("lock-photo").src = config.lockImage;
+  const lockPhoto = document.getElementById("lock-photo");
+  if (config.lockImage) lockPhoto.src = config.lockImage;
+  else lockPhoto.removeAttribute("src");
   document.getElementById("hint-text").textContent = config.hint || "";
 }
 
@@ -105,7 +106,10 @@ function normalizeAssetUrl(value) {
   const marker = "/createquatang/main/";
   if (url.includes("raw.githubusercontent.com/Zicc2005/createquatang/main/")) {
     const path = decodeURIComponent(url.slice(url.indexOf(marker) + marker.length));
-    return `/api/file?path=${encodeURIComponent(path)}`;
+    return `/api/file?path=${encodeURIComponent(path)}&v=${encodeURIComponent(id || Date.now())}`;
+  }
+  if (url.startsWith("/api/file?") && id && !new URL(url, location.href).searchParams.has("v")) {
+    return `${url}&v=${encodeURIComponent(id)}`;
   }
   return url;
 }
@@ -231,8 +235,10 @@ function resetLetter(onlyIfUnfinished = true) {
 }
 
 function loadSong(song) {
+  if (!song) return;
   audioPlayer.src = song.src;
-  albumArt.src = song.cover;
+  if (song.cover) albumArt.src = song.cover;
+  else albumArt.removeAttribute("src");
   songTitle.textContent = song.title;
   songArtist.textContent = "For you";
   updateSongListUI();
@@ -267,6 +273,7 @@ function updateSongListUI() {
 }
 
 function playSong() {
+  if (!audioPlayer.src) return;
   isPlaying = true;
   playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
   audioPlayer.play().catch(() => {});
@@ -279,12 +286,14 @@ function pauseSong() {
 }
 
 function prevSong() {
+  if (!config.songs.length) return;
   songIndex = (songIndex - 1 + config.songs.length) % config.songs.length;
   loadSong(config.songs[songIndex]);
   playSong();
 }
 
 function nextSong() {
+  if (!config.songs.length) return;
   songIndex = (songIndex + 1) % config.songs.length;
   loadSong(config.songs[songIndex]);
   playSong();
