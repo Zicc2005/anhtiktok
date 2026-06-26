@@ -62,6 +62,13 @@ const giftDirectLink = document.getElementById("gift-direct-link");
 const giftModalElement = document.getElementById("gift-modal-element");
 const fullscreenGiftBtn = document.getElementById("fullscreen-gift");
 const popSound = document.getElementById("pop-sound");
+const musicButton = document.getElementById("btn-music");
+const originalMusicButtonHtml = musicButton ? musicButton.innerHTML : "";
+
+let audioContext = null;
+let audioAnalyser = null;
+let audioVisualizerFrame = null;
+let audioVisualizerConnected = false;
 
 async function loadConfig() {
   if (window.GIFT_CONFIG) return;
@@ -116,6 +123,185 @@ function normalizeAssetUrl(value) {
     return `${url}&v=${encodeURIComponent(id)}`;
   }
   return url;
+}
+
+function loadBackgroundMedia() {
+  const wrap = document.getElementById("bg-media-wrap");
+  if (!wrap) return;
+
+  const base = "/style/background/";
+  const candidates = [
+    { src: `${base}bg.mp4`, type: "video" },
+    { src: `${base}bg.webm`, type: "video" },
+    { src: `${base}bg.gif`, type: "image" },
+    { src: `${base}bg.png`, type: "image" },
+    { src: `${base}bg.jpg`, type: "image" },
+    { src: `${base}bg.jpeg`, type: "image" },
+    { src: `${base}bg.webp`, type: "image" }
+  ];
+
+  function applyMedia(item) {
+    wrap.innerHTML = "";
+    if (item.type === "video") {
+      const video = document.createElement("video");
+      video.id = "bg-media";
+      video.src = item.src;
+      video.muted = true;
+      video.loop = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      video.setAttribute("playsinline", "");
+      video.addEventListener("canplay", () => {
+        wrap.appendChild(video);
+        video.play().catch(() => {});
+        document.body.classList.add("has-bg-media", "has-bg-animated");
+      }, { once: true });
+      video.addEventListener("timeupdate", () => {
+        if (video.duration && video.currentTime >= video.duration - 1) {
+          video.currentTime = 1;
+          video.play().catch(() => {});
+        }
+      });
+      video.load();
+      return;
+    }
+
+    const img = new Image();
+    img.id = "bg-media";
+    img.onload = () => {
+      wrap.appendChild(img);
+      document.body.classList.add("has-bg-media");
+      if (item.src.toLowerCase().includes(".gif")) document.body.classList.add("has-bg-animated");
+    };
+    img.src = item.src;
+  }
+
+  function tryNext(index) {
+    if (index >= candidates.length) return;
+    const item = candidates[index];
+    fetch(item.src, { method: "HEAD" })
+      .then((response) => (response.ok ? applyMedia(item) : tryNext(index + 1)))
+      .catch(() => tryNext(index + 1));
+  }
+
+  tryNext(0);
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function buildVinylHtml(song) {
+  const cover = song.cover || "/src/img/asset/music.png";
+  const bars = Array.from({ length: 18 }, () => "<span></span>").join("");
+  return `
+    <div class="vinyl-wrap">
+      <div class="vinyl-disc">
+        <img class="vinyl-img" src="${escapeHtml(cover)}" alt="">
+        <span class="vinyl-hole"></span>
+      </div>
+      <div class="vinyl-wave">${bars}</div>
+    </div>
+    <span class="song-label">${escapeHtml(song.title)}</span>
+  `;
+}
+
+function initAudioVisualizer() {
+  if (audioVisualizerConnected) return;
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioAnalyser = audioContext.createAnalyser();
+    audioAnalyser.fftSize = 256;
+    audioAnalyser.smoothingTimeConstant = 0.78;
+    const source = audioContext.createMediaElementSource(audioPlayer);
+    source.connect(audioAnalyser);
+    audioAnalyser.connect(audioContext.destination);
+    audioVisualizerConnected = true;
+  } catch {
+    audioAnalyser = null;
+  }
+}
+
+function startAudioVisualizer() {
+  if (audioVisualizerFrame) return;
+  initAudioVisualizer();
+  if (!audioAnalyser) return;
+  if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+
+  const data = new Uint8Array(audioAnalyser.frequencyBinCount);
+  const half = 9;
+  const step = Math.floor(data.length / half);
+
+  function tick() {
+    audioVisualizerFrame = requestAnimationFrame(tick);
+    audioAnalyser.getByteFrequencyData(data);
+    const bars = document.querySelectorAll("#btn-music .vinyl-wave span");
+    if (!bars.length) return;
+
+    const values = [];
+    for (let index = 0; index < half; index += 1) {
+      let sum = 0;
+      for (let offset = 0; offset < step; offset += 1) sum += data[index * step + offset];
+      values.push(Math.max(2, Math.round(Math.sqrt((sum / step) / 255) * 22)));
+    }
+
+    const mirrored = [...values].reverse().concat(values);
+    bars.forEach((bar, index) => {
+      bar.style.cssText = `height:${mirrored[index] || 2}px !important;animation:none;transition:height 0.06s;`;
+    });
+  }
+
+  tick();
+}
+
+function stopAudioVisualizer() {
+  if (audioVisualizerFrame) {
+    cancelAnimationFrame(audioVisualizerFrame);
+    audioVisualizerFrame = null;
+  }
+  document.querySelectorAll("#btn-music .vinyl-wave span").forEach((bar) => {
+    bar.style.cssText = "";
+  });
+}
+
+function updateMusicButton() {
+  if (!musicButton) return;
+  const song = config.songs && config.songs[songIndex];
+  const hasVinyl = Boolean(musicButton.querySelector(".vinyl-disc"));
+
+  if (!song) {
+    stopAudioVisualizer();
+    musicButton.innerHTML = originalMusicButtonHtml;
+    return;
+  }
+
+  if (isPlaying) {
+    if (!hasVinyl) musicButton.innerHTML = buildVinylHtml(song);
+    else {
+      const img = musicButton.querySelector(".vinyl-img");
+      const label = musicButton.querySelector(".song-label");
+      if (img) img.src = song.cover || "/src/img/asset/music.png";
+      if (label) label.textContent = song.title;
+    }
+    musicButton.querySelector(".vinyl-disc")?.classList.remove("paused");
+    musicButton.querySelector(".vinyl-wave")?.classList.remove("paused");
+    startAudioVisualizer();
+    return;
+  }
+
+  if (hasVinyl) {
+    musicButton.querySelector(".vinyl-disc")?.classList.add("paused");
+    musicButton.querySelector(".vinyl-wave")?.classList.add("paused");
+    const label = musicButton.querySelector(".song-label");
+    if (label) label.textContent = song.title;
+  } else {
+    musicButton.innerHTML = originalMusicButtonHtml;
+  }
+  stopAudioVisualizer();
 }
 
 function buildNumpad() {
@@ -246,6 +432,7 @@ function loadSong(song) {
   songTitle.textContent = song.title;
   songArtist.textContent = "For you";
   updateSongListUI();
+  updateMusicButton();
 }
 
 function renderSongList() {
@@ -280,6 +467,7 @@ function playSong() {
   if (!audioPlayer.src) return;
   isPlaying = true;
   playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+  updateMusicButton();
   audioPlayer.play().catch(() => {});
 }
 
@@ -287,6 +475,7 @@ function pauseSong() {
   isPlaying = false;
   playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
   audioPlayer.pause();
+  updateMusicButton();
 }
 
 function prevSong() {
@@ -401,7 +590,20 @@ playPauseBtn.addEventListener("click", () => (isPlaying ? pauseSong() : playSong
 document.getElementById("prev-btn").addEventListener("click", prevSong);
 document.getElementById("next-btn").addEventListener("click", nextSong);
 audioPlayer.addEventListener("timeupdate", updateProgress);
-audioPlayer.addEventListener("ended", nextSong);
+audioPlayer.addEventListener("play", () => {
+  isPlaying = true;
+  updateMusicButton();
+});
+audioPlayer.addEventListener("pause", () => {
+  if (!audioPlayer.ended) {
+    isPlaying = false;
+    updateMusicButton();
+  }
+});
+audioPlayer.addEventListener("ended", () => {
+  updateMusicButton();
+  nextSong();
+});
 progressBar.addEventListener("click", setProgress);
 
 document.getElementById("btn-image").addEventListener("click", () => {
@@ -440,6 +642,7 @@ document.getElementById("btn-reset-lock").addEventListener("click", () => locati
 
 async function init() {
   try {
+    loadBackgroundMedia();
     await loadConfig();
     normalizeConfig();
     buildNumpad();
