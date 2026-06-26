@@ -98,14 +98,18 @@ function rawUrl(owner, repo, branch, path) {
   return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${encodeURIComponentPath(path)}`;
 }
 
-async function storeUpload({ owner, repo, branch, id, folder, index, file, fallbackExt, filename }) {
+function publicFileUrl(origin, path) {
+  return `${origin.replace(/\/$/, "")}/api/file?path=${encodeURIComponent(path)}`;
+}
+
+async function storeUpload({ owner, repo, branch, id, folder, index, file, fallbackExt, filename, origin }) {
   const parsed = parseDataUrl(file);
   if (!parsed) return "";
   const ext = extensionFrom(file, fallbackExt);
   const resolvedFilename = filename ? filename(ext) : `${folder}-${String(index).padStart(2, "0")}.${ext}`;
   const path = `data/pages/${id}/assets/${folder}/${resolvedFilename}`;
   await putFile(owner, repo, branch, path, parsed.base64, `Add asset ${id}/${folder}/${resolvedFilename}`);
-  return rawUrl(owner, repo, branch, path);
+  return publicFileUrl(origin, path);
 }
 
 async function resolveAsset(context, value, folder, index, fallbackExt, filename) {
@@ -118,7 +122,8 @@ async function resolveAsset(context, value, folder, index, fallbackExt, filename
       index,
       file: value.file,
       fallbackExt,
-      filename
+      filename,
+      origin: context.origin
     });
   }
   return "";
@@ -203,7 +208,7 @@ module.exports = async function handler(req, res) {
     const origin = process.env.PUBLIC_SITE_URL || `https://${req.headers.host}`;
     const input = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const id = sanitizeName(input.id, `gift-${Date.now()}`);
-    const context = { owner, repo, branch, id };
+    const context = { owner, repo, branch, id, origin };
 
     const gallery = [];
     for (let index = 0; index < (input.gallery || []).length; index += 1) {

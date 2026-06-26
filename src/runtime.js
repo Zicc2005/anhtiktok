@@ -21,9 +21,6 @@ miễn là luôn hạnh phúc, học tốt và tận hưởng từng ngày thậ
   gift: { video: "gift/gift.mp4", link: "" }
 };
 
-const GITHUB_OWNER = "Zicc2005";
-const GITHUB_REPO = "createquatang";
-const GITHUB_BRANCH = "main";
 const id = new URLSearchParams(location.search).get("id");
 const saved = id && localStorage.getItem(`gift-site:${id}`);
 let config = { ...defaults, ...(saved ? JSON.parse(saved) : {}) };
@@ -69,9 +66,9 @@ const popSound = document.getElementById("pop-sound");
 
 async function loadConfig() {
   if (saved || !id) return;
-  const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data/pages/${encodeURIComponent(id)}/config.json`;
+  const url = `/api/page?id=${encodeURIComponent(id)}`;
   for (let attempt = 0; attempt < 12; attempt += 1) {
-    const response = await fetch(`${url}?t=${Date.now()}`, { cache: "no-store" });
+    const response = await fetch(`${url}&t=${Date.now()}`, { cache: "no-store" });
     if (response.ok) {
       const remoteConfig = await response.json();
       config = { ...defaults, ...remoteConfig };
