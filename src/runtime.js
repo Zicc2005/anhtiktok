@@ -83,10 +83,31 @@ function normalizeConfig() {
   if (!config.gallery || !config.gallery.length) config.gallery = defaults.gallery;
   if (!config.songs || !config.songs.length) config.songs = defaults.songs;
   if (!config.gift) config.gift = defaults.gift;
+  config.lockImage = normalizeAssetUrl(config.lockImage || defaults.lockImage);
+  config.gallery = config.gallery.map(normalizeAssetUrl);
+  config.songs = config.songs.map((song) => ({
+    ...song,
+    cover: normalizeAssetUrl(song.cover),
+    src: normalizeAssetUrl(song.src)
+  }));
+  config.gift = {
+    ...config.gift,
+    video: normalizeAssetUrl(config.gift.video)
+  };
   letterText = String(config.letter || defaults.letter).split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
   document.title = config.title || defaults.title;
-  document.getElementById("lock-photo").src = config.lockImage || defaults.lockImage;
+  document.getElementById("lock-photo").src = config.lockImage;
   document.getElementById("hint-text").textContent = config.hint || "";
+}
+
+function normalizeAssetUrl(value) {
+  const url = String(value || "");
+  const marker = "/createquatang/main/";
+  if (url.includes("raw.githubusercontent.com/Zicc2005/createquatang/main/")) {
+    const path = decodeURIComponent(url.slice(url.indexOf(marker) + marker.length));
+    return `/api/file?path=${encodeURIComponent(path)}`;
+  }
+  return url;
 }
 
 function buildNumpad() {
