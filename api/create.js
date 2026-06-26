@@ -128,6 +128,57 @@ module.exports = async function handler(req, res) {
     const owner = process.env.GITHUB_OWNER || DEFAULT_OWNER;
     const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
     const branch = process.env.GITHUB_BRANCH || DEFAULT_BRANCH;
+    const check = req.query && req.query.check;
+
+    if (check === "github" || check === "write") {
+      const result = {
+        ok: true,
+        owner,
+        repo,
+        branch,
+        hasGithubToken: Boolean(process.env.GITHUB_TOKEN),
+        repoRead: false,
+        branchRead: false,
+        contentsWrite: false
+      };
+
+      try {
+        await githubRequest(`/repos/${owner}/${repo}`, { method: "GET" });
+        result.repoRead = true;
+      } catch (error) {
+        result.ok = false;
+        result.repoReadError = error.message;
+      }
+
+      try {
+        await githubRequest(`/repos/${owner}/${repo}/branches/${encodeURIComponent(branch)}`, { method: "GET" });
+        result.branchRead = true;
+      } catch (error) {
+        result.ok = false;
+        result.branchReadError = error.message;
+      }
+
+      if (check === "write") {
+        try {
+          await putFile(
+            owner,
+            repo,
+            branch,
+            "data/_healthcheck.json",
+            Buffer.from(JSON.stringify({ checkedAt: new Date().toISOString() }), "utf8").toString("base64"),
+            "Verify createquatang API write access"
+          );
+          result.contentsWrite = true;
+        } catch (error) {
+          result.ok = false;
+          result.contentsWriteError = error.message;
+        }
+      }
+
+      json(res, result.ok ? 200 : 500, result);
+      return;
+    }
+
     json(res, 200, {
       ok: true,
       owner,
