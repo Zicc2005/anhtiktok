@@ -131,7 +131,7 @@ function validateVideo(input) {
 const pinInput = document.getElementById("pin");
 const pinError = document.getElementById("pin-error");
 
-pinInput.addEventListener("input", () => {
+function validatePin(showErrorIfInvalid = true) {
   pinInput.value = pinInput.value.replace(/\D/g, "");
   if (pinInput.value.length === 4) {
     pinInput.classList.remove("invalid");
@@ -140,11 +140,19 @@ pinInput.addEventListener("input", () => {
     pinError.style.display = "none";
   } else {
     pinInput.classList.remove("valid");
-    pinInput.classList.add("invalid");
-    pinError.textContent = "Mật khẩu đăng nhập phải gồm đúng 4 chữ số.";
-    pinError.style.display = "block";
+    if (showErrorIfInvalid && pinInput.value.length > 0) {
+      pinInput.classList.add("invalid");
+      pinError.textContent = "Mật khẩu đăng nhập phải gồm đúng 4 chữ số.";
+      pinError.style.display = "block";
+    } else {
+      pinInput.classList.remove("invalid");
+      pinError.style.display = "none";
+    }
   }
-});
+}
+
+pinInput.addEventListener("input", () => validatePin(true));
+validatePin(false);
 
 document.getElementById("add-gallery").addEventListener("click", () => addGalleryItem());
 document.getElementById("add-song").addEventListener("click", () => addSongItem());
