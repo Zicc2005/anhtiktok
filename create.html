@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tạo web chúc mừng</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500..700&family=Inter:wght@400;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style/builder.css" />
+</head>
+
+<body>
+  <main class="builder-shell">
+    <section class="builder-panel">
+      <div class="panel-head">
+        <p class="eyebrow">Gift web builder</p>
+        <h1>Tạo trang chúc mừng</h1>
+      </div>
+
+      <form id="builder-form" class="builder-form">
+        <label>
+          <span>Tiêu đề trang</span>
+          <input id="title" maxlength="80" value="Happy International Women's Day" />
+        </label>
+
+        <div class="grid-two">
+          <label>
+            <span>Pass đăng nhập</span>
+            <input id="pin" inputmode="numeric" maxlength="12" value="2005" />
+          </label>
+          <label>
+            <span>Gợi ý pass</span>
+            <input id="hint" value="Sự giống nhau của chúng ta 🎂" />
+          </label>
+        </div>
+
+        <label>
+          <span>Ảnh màn nhập pass</span>
+          <input id="lockImage" type="file" accept="image/*" />
+        </label>
+
+        <label>
+          <span>Thiệp chúc</span>
+          <textarea id="letter" rows="7">Happy 8/3 muộn nha ✨
+
+Chúc cho lúc nào cũng vui vẻ, xinh xắn và tràn đầy năng lượng tích cực
+Lúc nào cũng cười nhiều một chút, vì nụ cười của Vân làm mọi thứ dễ thương hơn hẳn 😆
+
+Cứ là chính mình thôi,
+miễn là luôn hạnh phúc, học tốt và tận hưởng từng ngày thật vui nha 🌸</textarea>
+        </label>
+
+        <section class="field-group">
+          <div class="group-title">
+            <h2>Ảnh gallery</h2>
+            <button type="button" id="add-gallery">Thêm ảnh</button>
+          </div>
+          <div id="gallery-list" class="stack"></div>
+        </section>
+
+        <section class="field-group">
+          <div class="group-title">
+            <h2>Nhạc</h2>
+            <button type="button" id="add-song">Thêm bài</button>
+          </div>
+          <div id="song-list" class="stack"></div>
+        </section>
+
+        <section class="field-group">
+          <h2>Gift</h2>
+          <div class="grid-two">
+            <label>
+              <span>Video tối đa 1 phút</span>
+              <input id="giftVideo" type="file" accept="video/mp4,video/webm,video/*" />
+            </label>
+            <label>
+              <span>Hoặc link bất kỳ</span>
+              <input id="giftLink" placeholder="https://..." />
+            </label>
+          </div>
+        </section>
+
+        <button class="primary-btn" type="submit">Tạo link</button>
+      </form>
+
+      <section id="result" class="result hidden">
+        <input id="result-link" readonly />
+        <div class="result-actions">
+          <a id="open-link" target="_blank" rel="noreferrer">Xem trang</a>
+          <button id="copy-link" type="button">Copy</button>
+        </div>
+      </section>
+
+      <p class="note">Khi bấm tạo, hệ thống lưu config và asset vào GitHub rồi trả về link public của web chúc mừng.</p>
+    </section>
+  </main>
+
+  <script src="style/builder.js"></script>
+</body>
+
+</html>
