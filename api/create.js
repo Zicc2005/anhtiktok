@@ -156,7 +156,7 @@ function pageHtml(config) {
   <div class="lock-screen" id="lock-screen">
     <div class="lock-content">
       <div class="lock-image">
-        <img id="lock-photo" src="" alt="Pass Image">
+          <img id="lock-photo" alt="">
       </div>
       <div class="lock-form">
         <div class="lock-icon">
@@ -314,6 +314,11 @@ module.exports = async function handler(req, res) {
     const origin = process.env.PUBLIC_SITE_URL || `https://${req.headers.host}`;
     const input = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const id = sanitizeName(input.id, `gift-${Date.now()}`);
+    const pin = String(input.pin || "").trim();
+    if (!/^\d{4}$/.test(pin)) {
+      json(res, 400, { error: "Pass đăng nhập phải đúng 4 số." });
+      return;
+    }
     const context = { owner, repo, branch, id, origin };
 
     const gallery = [];
@@ -380,7 +385,7 @@ module.exports = async function handler(req, res) {
     const config = {
       id,
       title: input.title || "Happy International Women's Day",
-      pin: input.pin || "2005",
+      pin,
       hint: input.hint || "",
       lockImage: lockImage || "",
       letter: input.letter || "",

@@ -134,6 +134,12 @@ document.getElementById("add-song").addEventListener("click", () => addSongItem(
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const giftVideoInput = document.getElementById("giftVideo");
+  const pin = document.getElementById("pin").value.trim();
+
+  if (!/^\d{4}$/.test(pin)) {
+    alert("Pass đăng nhập phải đúng 4 số.");
+    return;
+  }
 
   try {
     await validateVideo(giftVideoInput);
@@ -148,7 +154,7 @@ form.addEventListener("submit", async (event) => {
   const payload = {
     id,
     title: document.getElementById("title").value.trim(),
-    pin: document.getElementById("pin").value.trim() || "2005",
+    pin,
     hint: document.getElementById("hint").value.trim(),
     lockImage: lockImage ? { file: lockImage } : { url: "" },
     letter: document.getElementById("letter").value,
