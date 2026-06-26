@@ -96,8 +96,12 @@ function normalizeConfig() {
   letterText = String(config.letter || defaults.letter).split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
   document.title = config.title || defaults.title;
   const lockPhoto = document.getElementById("lock-photo");
-  if (config.lockImage) lockPhoto.src = config.lockImage;
-  else lockPhoto.removeAttribute("src");
+  lockPhoto.classList.remove("is-loaded");
+  lockPhoto.removeAttribute("src");
+  if (config.lockImage) {
+    lockPhoto.onload = () => lockPhoto.classList.add("is-loaded");
+    lockPhoto.src = config.lockImage;
+  }
   document.getElementById("hint-text").textContent = config.hint || "";
 }
 
