@@ -935,6 +935,49 @@ body.has-bg-animated::before {
   border: none;
 }
 
+.gift-direct {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 18px;
+  padding: 32px;
+  text-align: center;
+}
+
+.gift-direct[hidden] {
+  display: none;
+}
+
+.gift-direct h2 {
+  margin: 0;
+  color: #d81b60;
+  font-family: "Dancing Script", cursive;
+  font-size: 3rem;
+}
+
+.gift-direct p {
+  max-width: 520px;
+  margin: 0;
+  color: #ad1457;
+}
+
+.gift-direct a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: #d81b60;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(216, 27, 96, 0.28);
+}
+
 .gift-modal .close-btn {
   top: 15px !important;
   right: 15px !important;
