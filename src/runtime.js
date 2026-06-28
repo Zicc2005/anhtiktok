@@ -18,6 +18,7 @@ miễn là luôn hạnh phúc, học tốt và tận hưởng từng ngày thậ
     { title: "X I N H", cover: "", src: "sound/4.mp3" },
     { title: "Đ Ẹ P", cover: "", src: "sound/5.mp3" }
   ],
+  flyingText: "HAPPY INTERNATIONAL WOMEN'S DAY",
   gift: { video: "gift/gift.mp4", link: "" }
 };
 
@@ -90,7 +91,7 @@ async function loadConfig() {
 function normalizeConfig() {
   if (!Array.isArray(config.gallery)) config.gallery = id ? [] : defaults.gallery;
   if (!Array.isArray(config.songs)) config.songs = id ? [] : defaults.songs;
-  if (!config.gift) config.gift = id ? { video: "", link: "" } : defaults.gift;
+  if (!config.gift) config.gift = id ? { video: "", image: "", link: "" } : defaults.gift;
   config.lockImage = normalizeAssetUrl(config.lockImage || (id ? "" : defaults.lockImage));
   config.gallery = config.gallery.map(normalizeAssetUrl).filter(Boolean);
   config.songs = config.songs.map((song) => ({
@@ -100,10 +101,17 @@ function normalizeConfig() {
   })).filter((song) => song.src);
   config.gift = {
     ...config.gift,
-    video: normalizeAssetUrl(config.gift.video)
+    video: normalizeAssetUrl(config.gift.video),
+    image: normalizeAssetUrl(config.gift.image)
   };
   letterText = String(config.letter || defaults.letter).split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
   document.title = config.title || defaults.title;
+  
+  const flyingTexts = document.querySelectorAll(".flying-text");
+  flyingTexts.forEach((el) => {
+    el.textContent = (config.flyingText || defaults.flyingText).toUpperCase();
+  });
+
   const lockPhoto = document.getElementById("lock-photo");
   lockPhoto.classList.remove("is-loaded");
   lockPhoto.removeAttribute("src");
@@ -589,14 +597,33 @@ function openGift() {
   }
 
   giftDirect.hidden = true;
-  giftIframe.hidden = false;
-  const video = config.gift.video || defaults.gift.video;
-  giftIframe.src = video === defaults.gift.video ? "gift/gift.html" : video;
+  const giftImg = document.getElementById("gift-img");
+
+  if (config.gift.image) {
+    giftIframe.hidden = true;
+    if (giftImg) {
+      giftImg.src = config.gift.image;
+      giftImg.hidden = false;
+    }
+  } else {
+    if (giftImg) {
+      giftImg.hidden = true;
+      giftImg.src = "";
+    }
+    giftIframe.hidden = false;
+    const video = config.gift.video || defaults.gift.video;
+    giftIframe.src = video === defaults.gift.video ? "gift/gift.html" : video;
+  }
 }
 
 function closeGiftCleanup() {
   giftOverlay.classList.remove("active");
   giftIframe.src = "";
+  const giftImg = document.getElementById("gift-img");
+  if (giftImg) {
+    giftImg.src = "";
+    giftImg.hidden = true;
+  }
   if (wasPlayingBeforeGift) {
     audioPlayer.play().catch(() => {});
     wasPlayingBeforeGift = false;
@@ -658,10 +685,45 @@ fullscreenGiftBtn.addEventListener("click", () => {
   else document.exitFullscreen?.();
 });
 
+let popBuffer = null;
+let popAudioContext = null;
+
+async function preloadPopSound() {
+  try {
+    const soundSrc = popSound ? popSound.getAttribute("src") || "/src/pop.mp3" : "/src/pop.mp3";
+    const response = await fetch(soundSrc);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const arrayBuffer = await response.arrayBuffer();
+    popAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    popBuffer = await popAudioContext.decodeAudioData(arrayBuffer);
+  } catch (error) {
+    console.warn("Failed to preload pop sound, falling back to Audio element:", error);
+  }
+}
+
+function playPopSound() {
+  if (popBuffer && popAudioContext) {
+    if (popAudioContext.state === "suspended") {
+      popAudioContext.resume().catch(() => {});
+    }
+    try {
+      const source = popAudioContext.createBufferSource();
+      source.buffer = popBuffer;
+      source.connect(popAudioContext.destination);
+      source.start(0);
+      return;
+    } catch (error) {
+      console.warn("Web Audio playback failed, falling back:", error);
+    }
+  }
+  if (popSound) {
+    const clone = popSound.cloneNode();
+    clone.play().catch(() => {});
+  }
+}
+
 window.addEventListener("click", () => {
-  if (!popSound) return;
-  const clone = popSound.cloneNode();
-  clone.play().catch(() => {});
+  playPopSound();
 }, true);
 
 document.addEventListener("keydown", (event) => {
@@ -675,6 +737,7 @@ document.getElementById("btn-reset-lock").addEventListener("click", () => locati
 async function init() {
   try {
     loadBackgroundMedia();
+    preloadPopSound().catch(() => {});
     await loadConfig();
     normalizeConfig();
     buildNumpad();

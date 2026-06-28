@@ -8,23 +8,38 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500..700&family=Inter:wght@400;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Dancing+Script:wght@500..700&family=Inter:wght@400;600;700;800&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="style/builder.css" />
 </head>
 
 <body>
-  <main class="builder-shell">
-    <section class="builder-panel">
-      <div class="panel-head">
-        <p class="eyebrow">Gift web builder</p>
-        <h1>Tạo trang chúc mừng</h1>
-      </div>
+  <div class="bg-decorations" aria-hidden="true">
+    <span>🌸</span>
+    <span>✨</span>
+    <span>💖</span>
+    <span>🌸</span>
+    <span>🎈</span>
+    <span>✨</span>
+  </div>
 
+  <main class="builder-shell">
+    <header class="hero-section">
+      <span class="eyebrow">Gift web builder</span>
+      <h1>Tạo Trang Chúc Mừng</h1>
+      <p>Thiết kế trang quà tặng 8/3, Valentine, sinh nhật độc đáo và xịn xò chỉ trong vài phút.</p>
+    </header>
+
+    <section class="builder-panel">
       <form id="builder-form" class="builder-form">
         <label>
           <span>Tiêu đề trang</span>
           <input id="title" maxlength="80" value="Happy International Women's Day" />
+        </label>
+
+        <label>
+          <span>Dòng chữ chạy ở album ảnh</span>
+          <input id="flyingText" maxlength="80" value="HAPPY INTERNATIONAL WOMEN'S DAY" />
         </label>
 
         <div class="grid-two">
@@ -73,10 +88,14 @@ miễn là luôn hạnh phúc, học tốt và tận hưởng từng ngày thậ
 
         <section class="field-group">
           <h2>Gift</h2>
-          <div class="grid-two">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
             <label>
               <span>Video tối đa 1 phút</span>
               <input id="giftVideo" type="file" accept="video/mp4,video/webm,video/*" />
+            </label>
+            <label>
+              <span>Hoặc ảnh gift</span>
+              <input id="giftImage" type="file" accept="image/*" />
             </label>
             <label>
               <span>Hoặc link bất kỳ</span>

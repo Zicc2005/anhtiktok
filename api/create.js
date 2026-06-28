@@ -211,13 +211,13 @@ function pageHtml(config) {
     <div class="image-modal">
       <button class="close-btn" id="close-image"><i class="fa-solid fa-xmark"></i></button>
       <div class="gallery-container"><div class="gallery-row row-top" id="gallery-top"></div><div class="gallery-row row-bottom" id="gallery-bottom"></div></div>
-      <div class="gallery-gif-wrapper top"><img src="https://i.pinimg.com/originals/3f/4e/d3/3f4ed3cb1539cb42dc93b78020a3ef55.gif" alt="Decoration" class="gallery-gif" /><div class="flying-text text-right">HAPPY INTERNATIONAL WOMEN'S DAY</div></div>
-      <div class="gallery-gif-wrapper bottom"><div class="flying-text text-left">HAPPY INTERNATIONAL WOMEN'S DAY</div><img src="https://i.pinimg.com/originals/0f/f7/ac/0ff7acbadeffd1e41be9811d67e1697e.gif" alt="Decoration" class="gallery-gif" /></div>
+      <div class="gallery-gif-wrapper top"><img src="https://i.pinimg.com/originals/3f/4e/d3/3f4ed3cb1539cb42dc93b78020a3ef55.gif" alt="Decoration" class="gallery-gif" /><div class="flying-text text-right">${escapeHtml((config.flyingText || "HAPPY INTERNATIONAL WOMEN'S DAY").toUpperCase())}</div></div>
+      <div class="gallery-gif-wrapper bottom"><div class="flying-text text-left">${escapeHtml((config.flyingText || "HAPPY INTERNATIONAL WOMEN'S DAY").toUpperCase())}</div><img src="https://i.pinimg.com/originals/0f/f7/ac/0ff7acbadeffd1e41be9811d67e1697e.gif" alt="Decoration" class="gallery-gif" /></div>
     </div>
   </div>
 
   <div class="overlay" id="lightbox-overlay" style="z-index: 2000"><div class="lightbox-content"><button class="close-btn" id="close-lightbox"><i class="fa-solid fa-xmark"></i></button><img src="" alt="Full View" id="lightbox-img" /></div></div>
-  <div class="overlay" id="gift-overlay"><div class="gift-modal" id="gift-modal-element"><button class="close-btn" id="close-gift"><i class="fa-solid fa-xmark"></i></button><button class="fullscreen-btn" id="fullscreen-gift"><i class="fa-solid fa-expand"></i></button><iframe src="" frameborder="0" class="gift-iframe"></iframe><div class="gift-direct" id="gift-direct" hidden><h2>Gift đã sẵn sàng</h2><p>Link này mở trực tiếp để tránh website bên ngoài chặn iframe.</p><a id="gift-direct-link" target="_blank" rel="noreferrer">Mở gift</a></div></div></div>
+  <div class="overlay" id="gift-overlay"><div class="gift-modal" id="gift-modal-element"><button class="close-btn" id="close-gift"><i class="fa-solid fa-xmark"></i></button><button class="fullscreen-btn" id="fullscreen-gift"><i class="fa-solid fa-expand"></i></button><iframe src="" frameborder="0" class="gift-iframe"></iframe><img src="" id="gift-img" class="gift-image" hidden style="width: 100%; height: 100%; object-fit: contain; display: block;" /><div class="gift-direct" id="gift-direct" hidden><h2>Gift đã sẵn sàng</h2><p>Link này mở trực tiếp để tránh website bên ngoài chặn iframe.</p><a id="gift-direct-link" target="_blank" rel="noreferrer">Mở gift</a></div></div></div>
 
   <audio id="audio-player"></audio>
   <audio id="pop-sound" src="/src/pop.mp3"></audio>
@@ -376,6 +376,14 @@ module.exports = async function handler(req, res) {
       "mp4",
       (ext) => `gift.${ext}`
     );
+    const giftImage = await resolveAsset(
+      context,
+      input.gift && input.gift.image,
+      "gift",
+      1,
+      "jpg",
+      (ext) => `gift_img.${ext}`
+    );
     const lockImage = await resolveAsset(
       context,
       input.lockImage,
@@ -388,6 +396,7 @@ module.exports = async function handler(req, res) {
     const config = {
       id,
       title: input.title || "Happy International Women's Day",
+      flyingText: input.flyingText || "HAPPY INTERNATIONAL WOMEN'S DAY",
       pin,
       hint: input.hint || "",
       lockImage: lockImage || "",
@@ -396,6 +405,7 @@ module.exports = async function handler(req, res) {
       songs,
       gift: {
         video: giftVideo,
+        image: giftImage,
         link: input.gift && input.gift.link ? input.gift.link : ""
       }
     };

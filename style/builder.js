@@ -164,6 +164,7 @@ document.getElementById("add-song").addEventListener("click", () => addSongItem(
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const giftVideoInput = document.getElementById("giftVideo");
+  const giftImageInput = document.getElementById("giftImage");
   const pin = pinInput.value.trim();
 
   if (!/^\d{4}$/.test(pin)) {
@@ -184,9 +185,11 @@ form.addEventListener("submit", async (event) => {
   const id = makeId();
   const lockImage = await readFile(document.getElementById("lockImage"));
   const giftVideo = await readFile(giftVideoInput);
+  const giftImage = await readFile(giftImageInput);
   const payload = {
     id,
     title: document.getElementById("title").value.trim(),
+    flyingText: document.getElementById("flyingText").value.trim(),
     pin,
     hint: document.getElementById("hint").value.trim(),
     lockImage: lockImage ? { file: lockImage } : { url: "" },
@@ -196,6 +199,7 @@ form.addEventListener("submit", async (event) => {
     defaultSongs: defaults.songs,
     gift: {
       video: giftVideo ? { file: giftVideo } : { url: "" },
+      image: giftImage ? { file: giftImage } : { url: "" },
       link: document.getElementById("giftLink").value.trim()
     }
   };
