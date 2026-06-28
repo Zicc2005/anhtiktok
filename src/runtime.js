@@ -732,7 +732,32 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Backspace") deleteLastDigit();
 });
 
-document.getElementById("btn-reset-lock").addEventListener("click", () => location.reload());
+function resetLockState() {
+  lockScreen.classList.remove("unlocked");
+  mainContent.classList.add("main-content-hidden");
+  mainContent.classList.remove("main-content-visible");
+  
+  enteredPin = "";
+  updateDots();
+  
+  letterOverlay.classList.remove("active");
+  resetLetter(true);
+  musicOverlay.classList.remove("active");
+  imageOverlay.classList.remove("active");
+  closeImageMusic();
+  closeGiftCleanup();
+  
+  pauseSong();
+  
+  const lockContent = document.querySelector(".lock-content");
+  lockContent.classList.add("shake");
+  if (navigator.vibrate) navigator.vibrate(200);
+  setTimeout(() => {
+    lockContent.classList.remove("shake");
+  }, 500);
+}
+
+document.getElementById("btn-reset-lock").addEventListener("click", resetLockState);
 
 async function init() {
   try {
