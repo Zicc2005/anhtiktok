@@ -119,6 +119,12 @@ function normalizeConfig() {
     lockPhoto.onload = () => lockPhoto.classList.add("is-loaded");
     lockPhoto.src = config.lockImage;
   }
+  
+  const giftImg = document.getElementById("gift-img");
+  if (giftImg && config.gift.image) {
+    giftImg.src = config.gift.image;
+  }
+
   document.getElementById("hint-text").textContent = config.hint || "";
 }
 
@@ -602,13 +608,14 @@ function openGift() {
   if (config.gift.image) {
     giftIframe.hidden = true;
     if (giftImg) {
-      giftImg.src = config.gift.image;
+      if (giftImg.src !== config.gift.image) {
+        giftImg.src = config.gift.image;
+      }
       giftImg.hidden = false;
     }
   } else {
     if (giftImg) {
       giftImg.hidden = true;
-      giftImg.src = "";
     }
     giftIframe.hidden = false;
     const video = config.gift.video || defaults.gift.video;
@@ -621,7 +628,6 @@ function closeGiftCleanup() {
   giftIframe.src = "";
   const giftImg = document.getElementById("gift-img");
   if (giftImg) {
-    giftImg.src = "";
     giftImg.hidden = true;
   }
   if (wasPlayingBeforeGift) {
